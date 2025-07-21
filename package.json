@@ -1,0 +1,23 @@
+{
+  "name": "linkedinpostiapm",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@google/genai": "^0.14.0",
+    "gif.js": "0.2.0",
+    "firebase/app": "latest",
+    "firebase/auth": "latest",
+    "firebase": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0"
+  }
+}
