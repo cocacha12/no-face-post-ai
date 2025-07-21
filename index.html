@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NO FACE POST AI</title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^0.14.0",
+    "gif.js": "https://esm.sh/gif.js@0.2.0",
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
+    "firebase/": "https://esm.sh/firebase@^12.0.0/"
+  }
+}
+</script>
+  <script type="module" src="index.tsx"></script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+  <div id="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="logo">NO FACE POST <span class="logo-accent">AI</span></div>
+      </div>
+      <div class="auth-tabs">
+        <button id="auth-tab-login" class="auth-tab active">Login</button>
+        <button id="auth-tab-signup" class="auth-tab">Sign Up</button>
+      </div>
+      <div id="auth-forms">
+        <form id="login-form" class="auth-form active">
+          <input type="email" id="login-email" placeholder="Email" required autocomplete="email">
+          <input type="password" id="login-password" placeholder="Password" required autocomplete="current-password">
+          <p id="login-error" class="auth-error"></p>
+          <button type="submit" class="auth-btn">Login</button>
+        </form>
+        <form id="signup-form" class="auth-form">
+          <input type="email" id="signup-email" placeholder="Email" required autocomplete="email">
+          <input type="password" id="signup-password" placeholder="Password (min. 6 characters)" required autocomplete="new-password">
+          <p id="signup-error" class="auth-error"></p>
+          <button type="submit" class="auth-btn">Create Account</button>
+        </form>
+      </div>
+      <div class="auth-separator"><span>OR</span></div>
+      <button id="google-signin-btn" class="auth-btn google">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.35,11.1H12.18V13.83H18.69C18.36,17.64 15.19,19.27 12.19,19.27C8.36,19.27 5,16.25 5,12C5,7.75 8.36,4.73 12.19,4.73C15.28,4.73 17.27,6.48 17.27,6.48L19.6,4.2C19.6,4.2 16.59,1 12.19,1C6.42,1 2.03,5.54 2.03,12C2.03,18.46 6.42,23 12.19,23C17.92,23 21.5,18.52 21.5,12.23C21.5,11.64 21.45,11.35 21.35,11.1Z"></path></svg>
+        <span>Sign in with Google</span>
+      </button>
+    </div>
+  </div>
+
+  <main class="hidden">
+    <header>
+      <div class="logo">NO FACE POST <span class="logo-accent">AI</span></div>
+      <p>An AI content partner for modern product leaders.</p>
+    </header>
+    <button id="menu-toggle-button" aria-label="Open menu">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+    </button>
+    <div class="controls">
+      <div class="input-group">
+        <select id="language-select" required aria-label="Post language">
+          <option value="" disabled selected>1. Select Language</option>
+          <option value="English">English</option>
+          <option value="Spanish">Spanish</option>
+        </select>
+      </div>
+      <div id="idea-controls-group" class="disabled">
+        <div class="input-group">
+          <div class="idea-input-wrapper">
+            <textarea id="idea-input" placeholder="2. Enter post idea or click for suggestions..." rows="4" aria-label="Post idea" disabled></textarea>
+            <div id="idea-suggestions-container" class="hidden"></div>
+          </div>
+          <select id="category-select" required aria-label="Post category" disabled>
+            <option value="" disabled selected>3. Select Category</option>
+            <option value="Opinion">Opinion</option>
+            <option value="Critic">Critic</option>
+            <option value="History">History</option>
+            <option value="Problem-Agitate-Solution">Problem-Agitate-Solution</option>
+            <option value="False Myth">False Myth</option>
+            <option value="Discovery Story">Discovery Story</option>
+            <option value="Leadership Lesson">Leadership Lesson</option>
+          </select>
+        </div>
+        <button id="generate-button" aria-label="Generate new post" disabled>
+          <span class="button-text">Generate Post</span>
+        </button>
+      </div>
+    </div>
+    <div id="central-loader-container" class="hidden"></div>
+    <section id="result-container" aria-live="polite"></section>
+  </main>
+
+  <div id="menu-overlay" class="hidden"></div>
+  <aside id="side-menu">
+    <div class="side-menu-header">
+      <h2>Menu</h2>
+      <button id="side-menu-close-button" aria-label="Close menu">&times;</button>
+    </div>
+    <div class="side-menu-content">
+      <div class="menu-section">
+        <h3 class="menu-section-title">User Account</h3>
+        <div id="user-info-guest" class="menu-item">
+          <span>Status:</span>
+          <span class="user-status">Guest</span>
+        </div>
+        <div id="user-info-loggedin" class="menu-item hidden">
+          <span id="user-email" class="user-email-display"></span>
+          <button id="logout-button" class="menu-btn logout">Logout</button>
+        </div>
+      </div>
+      <div class="menu-section">
+        <h3 class="menu-section-title">Settings</h3>
+        <button id="menu-ai-identity" class="menu-btn">Define my AI Identity 🎭</button>
+        <button id="menu-edit-post-prompt" class="menu-btn">Edit Post Prompt</button>
+        <button id="menu-edit-image-prompt" class="menu-btn">Edit Image Prompts</button>
+        <button id="menu-knowledge-base" class="menu-btn">Knowledge Base</button>
+      </div>
+      <div class="menu-section">
+        <h3 class="menu-section-title">Usage</h3>
+        <div id="credit-counter" class="menu-item">
+            <span>Credits Used:</span>
+            <span id="credit-count">0</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div id="modal-overlay" class="hidden">
+    <div id="modal">
+      <div id="modal-header">
+        <h3 id="modal-title"></h3>
+        <button id="modal-close-button" aria-label="Close modal">&times;</button>
+      </div>
+      <div id="modal-content"></div>
+      <div id="modal-actions"></div>
+    </div>
+  </div>
+
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
